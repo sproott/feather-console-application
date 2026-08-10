@@ -66,6 +66,13 @@ type CommandDefinition = {
     Execute: Execute
 }
 
+[<RequireQualifiedAccess>]
+type CommandKind =
+    | User
+    /// Invoked by another process which parses its output, so it emits nothing but its result
+    /// and skips the interactive part of the life-cycle.
+    | System
+
 type Command = private {
     Description: string
     Help: string option
@@ -74,6 +81,7 @@ type Command = private {
     Initialize: Initialize option
     Interact: Interact option
     Execute: Execute
+    Kind: CommandKind
 }
 
 [<RequireQualifiedAccess>]
@@ -100,13 +108,18 @@ module internal CommandDefinition =
                 Initialize = definition.Initialize
                 Interact = definition.Interact
                 Execute = definition.Execute
+                Kind = CommandKind.User
             }
         }
+
+    let internal validateAsSystemCommand (definition: CommandDefinition): Result<Command, CommandDefinitionError> =
+        validate definition <!> fun command -> { command with Kind = CommandKind.System }
 
 [<RequireQualifiedAccess>]
 module internal Command =
     let description ({ Description = description }: Command) = description
     let definitions ({ Options = options; Arguments = arguments }: Command) = options, arguments
+    let kind ({ Kind = kind }: Command) = kind
 
 type internal Commands = Map<CommandName, Command>
 
@@ -144,7 +157,7 @@ module internal Commands =
 
             match commands |> namesByPattern partialNamePattern with
             | [] -> NoCommand name
-            | [ commandName ] -> ExactlyOne (commandName, commands.[commandName])
+            | [ commandName ] -> ExactlyOne (commandName, commands[commandName])
             | commandNames -> MoreThanOne (name, commandNames)
 
     let applicationOptions: OptionsDefinitions =
@@ -396,4 +409,5 @@ module internal Commands =
             Initialize = None
             Interact = None
             Execute = Execute <| fun _ -> failwith "Exit command should not be executed."
+            Kind = CommandKind.User
         }

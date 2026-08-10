@@ -135,6 +135,7 @@ type Option = private {
     Shortcut: OptionShortcut option
     Description: string
     Value: OptionValueDefinition
+    Suggest: Suggest option
 }
 
 type RawOptionDefinition = internal {
@@ -142,6 +143,7 @@ type RawOptionDefinition = internal {
     Shortcut: OptionShortcut option
     Description: string
     Value: OptionValueDefinition
+    Suggest: Suggest option
 }
 
 [<RequireQualifiedAccess>]
@@ -161,6 +163,7 @@ module internal RawOptionDefinition =
                 Shortcut = shortcut
                 Description = description
                 Value = value
+                Suggest = None
             }
         }
 
@@ -170,7 +173,7 @@ module internal RawOptionDefinition =
 [<RequireQualifiedAccess>]
 module Option =
     //
-    // Public create functions for RawArgumentDefinition
+    // Public create functions for RawOptionDefinition
     //
     let create = RawOptionDefinition.create
 
@@ -195,11 +198,20 @@ module Option =
         create name shortcut description (OptionValueDefinition.ValueRequiredArray defaultValues)
 
     //
+    // Completion helper
+    //
+
+    /// Attach completion suggestions to an option definition.
+    let suggest (suggestion: Suggest) (def: Result<RawOptionDefinition, OptionDefinitionError>): Result<RawOptionDefinition, OptionDefinitionError> =
+        def |> Result.map (fun d -> { d with Suggest = Some suggestion })
+
+    //
     // Internal options functions
     //
     let internal name ({ Name = name }: Option) = name
     let internal nameValue = name >> OptionName.value
     let internal shortcut ({ Shortcut = shortcut }: Option) = shortcut
+    let internal suggestion ({ Suggest = suggest }: Option) = suggest
 
     let internal createApplicationOption name shortcut description value: Option =
         {
@@ -207,6 +219,7 @@ module Option =
             Shortcut = Some (OptionShortcut shortcut)
             Description = description
             Value = value
+            Suggest = None
         }
 
     let internal createApplicationOptionWithoutShortcut name description value: Option =
@@ -215,6 +228,7 @@ module Option =
             Shortcut = None
             Description = description
             Value = value
+            Suggest = None
         }
 
     let internal isOption (value: InputValue) =
@@ -350,6 +364,7 @@ module internal OptionsDefinitions =
             Shortcut = option.Shortcut
             Description = option.Description
             Value = option.Value
+            Suggest = option.Suggest
         }
 
     let validate (options: RawOptionDefinition list) =
@@ -521,6 +536,7 @@ module internal Options =
                     RestOfArgs = rawArgs
                 }
 
+    [<TailCall>]
     let rec parseShortcut optionDefinitions (parsed: Options) (rawArgs: InputValue list) = function
         | [] -> Ok (parsed, rawArgs)
         | letter :: rest ->
@@ -540,6 +556,7 @@ module internal Options =
         | Some defaultValue -> options.Add(optionName |> OptionName.value, optionValue defaultValue)
         | _ -> options
 
+    [<TailCall>]
     let rec prepareOptionsDefaults (options: Options) = function
         | [] -> options
         | (definition: Option) :: definitions ->

@@ -51,14 +51,14 @@ module MFConsoleApplication =
 
     /// Map error by appending a current command.
     let private (<!!*>) result (currentCommand: CurrentCommand) =
-        result <@> fun __ -> (__, currentCommand)
+        result <@> fun e -> (e, currentCommand)
 
     let private (<*!!*>) xResult (currentCommand: CurrentCommand) =
-        xResult |> AsyncResult.mapError (fun __ -> (__, currentCommand))
+        xResult |> AsyncResult.mapError (fun e -> (e, currentCommand))
 
     /// Map error with appended current command.
     let private (<!!!>) result f =
-        result <@> fun (error, (__: CurrentCommand)) -> (error |> f, __)
+        result <@> fun (error, (currentCommand: CurrentCommand)) -> (error |> f, currentCommand)
 
     type private Args = InputValue []
 
@@ -179,15 +179,22 @@ module MFConsoleApplication =
 
                     return ExitCode.Success
                 | args ->
-                    parts |> showApplicationInfo
-
                     let! (input, unfilledArguments) =
                         args
                         |> Args.parse output parts.ApplicationOptions parts.Commands <!!!> ConsoleApplicationError.ArgsError
 
                     let commandName = input |> Input.getCommandName
-                    let command = parts.Commands.[commandName]
+                    let command = parts.Commands[commandName]
                     let currentCommand: CurrentCommand = Some (commandName, command)
+
+                    let prepareInput =
+                        match command |> Command.kind with
+                        | CommandKind.System -> id
+                        | CommandKind.User ->
+                            parts |> showApplicationInfo
+
+                            (command.Initialize <?=> id)
+                            >> Interact.map parts.Ask (command.Interact <?=> Interact.id)
 
                     //debug <| sprintf "Input:\n%A" input
                     // todo <later> - show input as table(s) ->
@@ -197,10 +204,7 @@ module MFConsoleApplication =
                     // this could be done after `debug` is set for application directly, with -vvvv
 
                     try
-                        let (input, _) =
-                            (input, output)
-                            |> (command.Initialize <?=> id)
-                            |> Interact.map parts.Ask (command.Interact <?=> Interact.id)
+                        let (input, _) = (input, output) |> prepareInput
 
                         let! input =
                             input

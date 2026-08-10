@@ -34,6 +34,9 @@ module internal String =
 
     let toUpper (string: string) = string.ToUpper()
 
+    let startsWith (prefix: string) (string: string) =
+        string.StartsWith(prefix, StringComparison.Ordinal)
+
     let toInt (string: string) =
         match string |> Int32.TryParse with
         | true, int -> Some int

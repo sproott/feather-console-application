@@ -15,9 +15,6 @@ type ArgsHasOption = {
 exception InputWasNotSetInTheCommandException
 
 let provideArgsHasOption = seq {
-    //
-    // cases without separator --
-    //
     yield {
         Description = "Empty options with interaction - should not exists"
         Argv = [| |]
@@ -55,9 +52,6 @@ let provideArgsHasOption = seq {
         ExpectedWithValue = Some (OptionValue.ValueRequired "value1")
     }
 
-    //
-    // cases with separator --
-    //
     yield {
         Description = "No interaction"
         Argv = [| "-n"; "--"; "value" |]
@@ -128,9 +122,6 @@ let provideArgsHasOption = seq {
         ExpectedWithValue = Some (OptionValue.ValueOptional (Some ""))
     }
 
-    //
-    // cases with no-interaction
-    //
     yield {
         Description = "No arguments and empty options with no-interaction shortuct - should not exists"
         Argv = [| |]
@@ -237,9 +228,6 @@ type ArgsHasArgument = {
 }
 
 let provideArgsHasArgument = seq {
-    //
-    // cases without separator --
-    //
     yield {
         Description = "No arguments with interaction"
         Argv = [| "value" |]
@@ -253,9 +241,6 @@ let provideArgsHasArgument = seq {
         Expected = Some (ArgumentValue.Optional (Some "default"))
     }
 
-    //
-    // cases with separator --
-    //
     yield {
         Description = "Argument value with no interaction"
         Argv = [| "-n"; "--"; "mandatory" |]

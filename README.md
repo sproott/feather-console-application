@@ -11,20 +11,42 @@ The Console application allows you to create command-line commands. Your console
 This library is inspired by [Symfony/Style](https://symfony.com/doc/current/console/style.html) and [Symfony/Console](https://symfony.com/doc/current/components/console.html)
 
 ## Table of Contents
-- [Installation](#installation)
-- [Creating a Console Application](#creating-a-console-application)
+- [ Console Application](#-console-application)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Creating a Console Application](#creating-a-console-application)
+    - [Outputs:](#outputs)
     - [Builder](#builder)
-- [Life-cycle](#life-cycle)
+  - [Life-cycle](#life-cycle)
     - [Interaction](#interaction)
-- [Console Input](#console-input-arguments--options)
-    - [Command Name](#command-name)
-        - [Shortcut syntax](#shortcut-syntax)
+      - [Examples:](#examples)
+  - [Console Input (Arguments \& Options)](#console-input-arguments--options)
+    - [Command name](#command-name)
+      - [Shortcut Syntax](#shortcut-syntax)
     - [Arguments](#arguments)
     - [Options](#options)
-- [Console Output](#console-output)
-- [Default commands](#default-commands)
+      - [Application Options](#application-options)
+  - [Console Output](#console-output)
+  - [Default commands](#default-commands)
     - [Help](#help)
     - [List](#list)
+    - [About](#about)
+    - [Create help message](#create-help-message)
+  - [Shell Completion](#shell-completion)
+    - [Enabling Completion](#enabling-completion)
+    - [Generating Shell Scripts](#generating-shell-scripts)
+    - [How It Works](#how-it-works)
+    - [Dynamic Value Suggestions](#dynamic-value-suggestions)
+    - [Controlling Visibility](#controlling-visibility)
+    - [Limitations](#limitations)
+  - [Shell Completion](#shell-completion-1)
+    - [Enabling Completion](#enabling-completion-1)
+    - [Generating Shell Scripts](#generating-shell-scripts-1)
+    - [How It Works](#how-it-works-1)
+    - [Dynamic Value Suggestions](#dynamic-value-suggestions-1)
+    - [Controlling Visibility](#controlling-visibility-1)
+    - [Limitations](#limitations-1)
+  - [Tips](#tips)
 
 ## Installation
 ```sh
@@ -155,28 +177,28 @@ Command: `dotnet example.dll my:first-command --help`
 
 ### Builder
 
-| Function | Arguments | Description |
-| --- | --- | --- |
-| name | `name: string` | It will set a name of the application. (_This is part of ApplicationInfo._) |
-| version | `version: string` | It will set a version of the application. (_This is part of ApplicationInfo._) |
-| title | `title: string` | It will set a main title of the application. (_This is part of ApplicationInfo._) |
-| description | `description: string` | It will set a description of the application. (_It is visible in `about` command._) |
-| meta | `string * string` | It will add an application meta information. (_It is visible in `about` command._) |
-| | `(string * string) list` | It will add multiple application meta information. (_It is visible in `about` command._) |
-| git | `repository: string option * branch: string option * commit: string option` | It will register git meta information, which is visible in `about` command. |
-| gitRepository | `repository: string` | It will register git repository meta information, which is visible in `about` command. |
-| gitBranch | `branch: string` | It will register git branch meta information, which is visible in `about` command. |
-| gitCommit | `commit: string` | It will register git commit meta information, which is visible in `about` command. |
-| info | `ApplicationInfo` | It will define, how application info will be shown in commands output. (Default is `Hidden`) |
-| showOptions | `OptionDecorationLevel` | It will define, how options will be shown in the command help output. (Default is `Minimal`) |
-| command | `commandName: string`, `CommandDefinition` | It will register a command to the application. |
-| defaultCommand | `commandName: string` | It will set a name of default command. Default command is run when no command name is pass to the arguments. (_Default is `list`._) |
-| useOutput | `Output` | It will override `Output` in `IO`, which gets every command life-cycle function. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-style)_) |
-| useAsk | `question: string -> answer: string` | It will override an Ask function, which is used in `Interact` life-cycle stage. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-application#ask))_ |
-| updateOutput | `Output -> Output` | Function which allows to change the output (set style, different outputInterface for a ConsoleStyle and more) |
-| withStyle | `Feather.ConsoleApplication.Style` | A style which will be set to the `Output`. |
-| withCustomTags | `Feather.ConsoleApplication.CustomTag list` | It will register custom tags to the Output Style. |
-| | `Result<Feather.ConsoleApplication.CustomTag, string> list` | It will handle results and register custom tags to the Output Style. |
+| Function       | Arguments                                                                   | Description                                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name           | `name: string`                                                              | It will set a name of the application. (_This is part of ApplicationInfo._)                                                                                                           |
+| version        | `version: string`                                                           | It will set a version of the application. (_This is part of ApplicationInfo._)                                                                                                        |
+| title          | `title: string`                                                             | It will set a main title of the application. (_This is part of ApplicationInfo._)                                                                                                     |
+| description    | `description: string`                                                       | It will set a description of the application. (_It is visible in `about` command._)                                                                                                   |
+| meta           | `string * string`                                                           | It will add an application meta information. (_It is visible in `about` command._)                                                                                                    |
+|                | `(string * string) list`                                                    | It will add multiple application meta information. (_It is visible in `about` command._)                                                                                              |
+| git            | `repository: string option * branch: string option * commit: string option` | It will register git meta information, which is visible in `about` command.                                                                                                           |
+| gitRepository  | `repository: string`                                                        | It will register git repository meta information, which is visible in `about` command.                                                                                                |
+| gitBranch      | `branch: string`                                                            | It will register git branch meta information, which is visible in `about` command.                                                                                                    |
+| gitCommit      | `commit: string`                                                            | It will register git commit meta information, which is visible in `about` command.                                                                                                    |
+| info           | `ApplicationInfo`                                                           | It will define, how application info will be shown in commands output. (Default is `Hidden`)                                                                                          |
+| showOptions    | `OptionDecorationLevel`                                                     | It will define, how options will be shown in the command help output. (Default is `Minimal`)                                                                                          |
+| command        | `commandName: string`, `CommandDefinition`                                  | It will register a command to the application.                                                                                                                                        |
+| defaultCommand | `commandName: string`                                                       | It will set a name of default command. Default command is run when no command name is pass to the arguments. (_Default is `list`._)                                                   |
+| useOutput      | `Output`                                                                    | It will override `Output` in `IO`, which gets every command life-cycle function. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-style)_)          |
+| useAsk         | `question: string -> answer: string`                                        | It will override an Ask function, which is used in `Interact` life-cycle stage. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-application#ask))_ |
+| updateOutput   | `Output -> Output`                                                          | Function which allows to change the output (set style, different outputInterface for a ConsoleStyle and more)                                                                         |
+| withStyle      | `Feather.ConsoleApplication.Style`                                          | A style which will be set to the `Output`.                                                                                                                                            |
+| withCustomTags | `Feather.ConsoleApplication.CustomTag list`                                 | It will register custom tags to the Output Style.                                                                                                                                     |
+|                | `Result<Feather.ConsoleApplication.CustomTag, string> list`                 | It will handle results and register custom tags to the Output Style.                                                                                                                  |
 
 NOTES:
 - All parts of ApplicationInfo are shown in `about` command
@@ -284,32 +306,32 @@ There are many ways how to access Arguments:
 
 - Through pattern matching
 
-    | Active Pattern                   | Description |
-    | ---                              | ---         |
-    | _Input_._Argument_.**IsDefined** | Matched when given string is defined as argument name. |
+    | Active Pattern                   | Description                                                                        |
+    | -------------------------------- | ---------------------------------------------------------------------------------- |
+    | _Input_._Argument_.**IsDefined** | Matched when given string is defined as argument name.                             |
     | _Input_._Argument_.**Has**       | Matched when given string has any value in current Input (_default or from args_). |
-    | _Input_._Argument_.**IsSet**     | Matched when input _has_ argument AND that value is _not empty_. |
+    | _Input_._Argument_.**IsSet**     | Matched when input _has_ argument AND that value is _not empty_.                   |
 
     - Active patterns for accessing a value
 
-    | Active Pattern                       | Description | Value |
-    | ---                                  | ---         | ---   |
-    | _Input_._Argument_.**Value**         | Matched when input _has_ argument. (_Fail with exception when value is not set or it is a list._) | `string` |
-    | _Input_._Argument_.**OptionalValue** | Matched when input _has_ argument AND it has a single value. | `string` |
-    | _Input_._Argument_.**ListValue**     | Matched when input _has_ argument. | `string list` |
+    | Active Pattern                       | Description                                                                                       | Value         |
+    | ------------------------------------ | ------------------------------------------------------------------------------------------------- | ------------- |
+    | _Input_._Argument_.**Value**         | Matched when input _has_ argument. (_Fail with exception when value is not set or it is a list._) | `string`      |
+    | _Input_._Argument_.**OptionalValue** | Matched when input _has_ argument AND it has a single value.                                      | `string`      |
+    | _Input_._Argument_.**ListValue**     | Matched when input _has_ argument.                                                                | `string list` |
 
 - Just get a value from `Input`
 
-    | Function                           | Description |
-    | ---                                | ---         |
-    | _Input_._Argument_.**tryGet**      | Returns an `ArgumentValue option`, when Input _has_ argument. |
-    | _Input_._Argument_.**get**         | Returns an `ArgumentValue`, when Input _has_ argument OR fail with exception. |
-    | _Input_._Argument_.**value**       | Returns a `string` value from ArgumentValue, when Input _has_ argument OR fail with exception. |
-    | _Input_._Argument_.**asString**    | Returns a `string option` value from ArgumentValue, when Input _has_ argument. |
+    | Function                           | Description                                                                                                                               |
+    | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+    | _Input_._Argument_.**tryGet**      | Returns an `ArgumentValue option`, when Input _has_ argument.                                                                             |
+    | _Input_._Argument_.**get**         | Returns an `ArgumentValue`, when Input _has_ argument OR fail with exception.                                                             |
+    | _Input_._Argument_.**value**       | Returns a `string` value from ArgumentValue, when Input _has_ argument OR fail with exception.                                            |
+    | _Input_._Argument_.**asString**    | Returns a `string option` value from ArgumentValue, when Input _has_ argument.                                                            |
     | _Input_._Argument_.**asInt**       | Returns an `int option` value from ArgumentValue, when Input _has_ argument. (_It fails with an exception when string value is not int._) |
-    | _Input_._Argument_.**asList**      | Returns an `string list` value from ArgumentValue, when Input _has_ argument. (_It returns a list even for single values._) |
-    | _Input_._Argument_.**tryGetAsInt** | Returns an `int option` value from ArgumentValue, when Input _has_ argument. (_It returns None when string value is not int._) |
-    | _Input_._Argument_.**isValueSet**  | Checks whether argument has a value AND that value is _not empty_. |
+    | _Input_._Argument_.**asList**      | Returns an `string list` value from ArgumentValue, when Input _has_ argument. (_It returns a list even for single values._)               |
+    | _Input_._Argument_.**tryGetAsInt** | Returns an `int option` value from ArgumentValue, when Input _has_ argument. (_It returns None when string value is not int._)            |
+    | _Input_._Argument_.**isValueSet**  | Checks whether argument has a value AND that value is _not empty_.                                                                        |
 
     Note: All functions above will fail with an exception when given "argument" is not defined.
 
@@ -356,32 +378,32 @@ There are many ways how to access Options:
 
 - Through pattern matching
 
-    | Active Pattern                 | Description |
-    | ---                            | ---         |
-    | _Input_._Option_.**IsDefined** | Matched when given string is defined as option name. |
+    | Active Pattern                 | Description                                                                        |
+    | ------------------------------ | ---------------------------------------------------------------------------------- |
+    | _Input_._Option_.**IsDefined** | Matched when given string is defined as option name.                               |
     | _Input_._Option_.**Has**       | Matched when given string has any value in current Input (_default or from args_). |
-    | _Input_._Option_.**IsSet**     | Matched when input _has_ option AND that value is _not empty_. |
+    | _Input_._Option_.**IsSet**     | Matched when input _has_ option AND that value is _not empty_.                     |
 
     - Active patterns for accessing a value
 
-    | Active Pattern                     | Description | Value |
-    | ---                                | ---         | ---   |
-    | _Input_._Option_.**Value**         | Matched when input _has_ option. (_Fail with exception when value is not set or it is a list._) | `string` |
-    | _Input_._Option_.**OptionalValue** | Matched when input _has_ option AND it has a single value. | `string` |
-    | _Input_._Option_.**ListValue**     | Matched when input _has_ option. | `string list` |
+    | Active Pattern                     | Description                                                                                     | Value         |
+    | ---------------------------------- | ----------------------------------------------------------------------------------------------- | ------------- |
+    | _Input_._Option_.**Value**         | Matched when input _has_ option. (_Fail with exception when value is not set or it is a list._) | `string`      |
+    | _Input_._Option_.**OptionalValue** | Matched when input _has_ option AND it has a single value.                                      | `string`      |
+    | _Input_._Option_.**ListValue**     | Matched when input _has_ option.                                                                | `string list` |
 
 - Just get a value from `Input`
 
-    | Function                        | Description |
-    | ---                             | ---         |
-    | _Input_.Option_.**tryGet**      | Returns an `OptionValue option`, when Input _has_ option. |
-    | _Input_.Option_.**get**         | Returns an `OptionValue`, when Input _has_ option OR fail with exception. |
-    | _Input_.Option_.**value**       | Returns a `string` value from OptionValue, when Input _has_ option OR fail with exception. |
-    | _Input_.Option_.**asString**    | Returns a `string option` value from OptionValue, when Input _has_ option. |
+    | Function                        | Description                                                                                                                           |
+    | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+    | _Input_.Option_.**tryGet**      | Returns an `OptionValue option`, when Input _has_ option.                                                                             |
+    | _Input_.Option_.**get**         | Returns an `OptionValue`, when Input _has_ option OR fail with exception.                                                             |
+    | _Input_.Option_.**value**       | Returns a `string` value from OptionValue, when Input _has_ option OR fail with exception.                                            |
+    | _Input_.Option_.**asString**    | Returns a `string option` value from OptionValue, when Input _has_ option.                                                            |
     | _Input_.Option_.**asInt**       | Returns an `int option` value from OptionValue, when Input _has_ option. (_It fails with an exception when string value is not int._) |
-    | _Input_.Option_.**asList**      | Returns an `string list` value from OptionValue, when Input _has_ option. (_It returns a list even for single values._) |
-    | _Input_.Option_.**tryGetAsInt** | Returns an `int option` value from OptionValue, when Input _has_ option. (_It returns None when string value is not int._) |
-    | _Input_._Option_.**isValueSet** | Checks whether option has a value AND that value is _not empty_. |
+    | _Input_.Option_.**asList**      | Returns an `string list` value from OptionValue, when Input _has_ option. (_It returns a list even for single values._)               |
+    | _Input_.Option_.**tryGetAsInt** | Returns an `int option` value from OptionValue, when Input _has_ option. (_It returns None when string value is not int._)            |
+    | _Input_._Option_.**isValueSet** | Checks whether option has a value AND that value is _not empty_.                                                                      |
 
     Note: All functions above will fail with an exception when given "option" is not defined.
 
@@ -526,6 +548,260 @@ Help =
         "        <c:green>dotnet {{command.full_name}} test</c>"
     ]
 ```
+
+## Shell Completion
+
+### Enabling Completion
+
+To enable shell completion for your console application, use the `enableCompletion` CE operation:
+
+```fsharp
+let app =
+    consoleApplication {
+        name "myapp"
+        enableCompletion  // Uses default configuration: command name "completion", visible in help
+    }
+```
+
+You can also customize the completion command configuration:
+
+```fsharp
+enableCompletion { CommandName = "complete"; IsVisible = true }
+```
+
+### Generating Shell Scripts
+
+Once completion is enabled, you can generate integration scripts for your shell:
+
+```bash
+myapp completion bash >> ~/.bashrc
+myapp completion zsh >> ~/.zshrc
+myapp completion fish >> ~/.config/fish/completions/myapp.fish
+```
+
+After adding the script, source the file (or restart your shell):
+
+```bash
+source ~/.bashrc
+# or
+source ~/.zshrc
+# or just restart your terminal for fish
+```
+
+The generated script uses your actual application name automatically — no manual substitution needed.
+
+### How It Works
+
+Completion uses two commands internally:
+
+- `completion` (or your configured public name) generates shell integration scripts.
+- `__completion` is an internal hidden resolver command used by generated scripts at runtime.
+
+The resolver command receives the current command line and cursor position, resolves suggestions from your registered command metadata (command names, arguments, and options), and returns one suggestion per line. The shell then uses these suggestions to provide autocompletion when you press Tab.
+
+### Dynamic Value Suggestions
+
+Suggestions are attached directly to option and argument definitions with `Option.suggest` and `Argument.suggest`:
+
+```fsharp
+command "deploy" {
+    Description = "Deploy command"
+    Help = None
+    Arguments = [
+        Argument.required "target" "Deployment target"
+        |> Argument.suggest (Suggest.sync (fun ctx -> getTargets ctx.CurrentWord))
+    ]
+    Options = [
+        Option.required "env" (Some "e") "Environment" ""
+        |> Option.suggest (Suggest.values ["dev"; "staging"; "prod"])
+    ]
+    Initialize = None
+    Interact = None
+    Execute = Execute <| fun (_, _) -> ExitCode.Success
+}
+```
+
+Built-in suggestion sources:
+
+```fsharp
+Option.required "path" None "Path" ""
+|> Option.suggest Suggest.files
+
+Option.required "dir" None "Directory" ""
+|> Option.suggest Suggest.directories
+
+Option.required "project" None "Project file" ""
+|> Option.suggest (Suggest.filesWithExtension [".fsproj"; ".csproj"])
+```
+
+Suggestion sources are composable:
+
+```fsharp
+Suggest.values ["dev"; "staging"; "prod"]
+|> Suggest.map String.toUpperInvariant
+|> Suggest.filter (fun value -> value <> "PROD")
+```
+
+Available combinators:
+
+- `Suggest.map`
+- `Suggest.mapAsync`
+- `Suggest.filter`
+- `Suggest.filterAsync`
+
+### Controlling Visibility
+
+Set `IsVisible = false` to hide the completion command from `list` and `help` output while still allowing the shell to invoke it:
+
+```fsharp
+enableCompletion { CommandName = "completion"; IsVisible = false }
+```
+
+### Limitations
+
+- **PowerShell not supported**: PowerShell shell completion is not yet supported.
+
+## Shell Completion
+
+### Enabling Completion
+
+To enable shell completion for your console application, use the `enableCompletion` CE operation:
+
+```fsharp
+let app =
+    consoleApplication {
+        name "myapp"
+        enableCompletion  // Uses default configuration: command name "completion", visible in help
+    }
+```
+
+You can also customize the completion command configuration:
+
+```fsharp
+enableCompletion { CompletionConfig.defaults with CommandName = "complete" }
+```
+
+| Field            | Default        | Meaning                                                                                                                                                              |
+| ---------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CommandName`    | `"completion"` | Name of the command generating the shell scripts. It must not collide with a reserved name or with one of your commands.                                             |
+| `IsVisible`      | `true`         | Whether the completion command is shown by `list` and `help`.                                                                                                        |
+| `ExecutableName` | `None`         | Command the generated script completes. Defaults to the name of the running executable, which is what you want unless your binary is started under a different name. |
+
+### Generating Shell Scripts
+
+Once completion is enabled, you can generate integration scripts for your shell:
+
+```bash
+myapp completion bash >> ~/.bashrc
+myapp completion zsh >> ~/.zshrc
+myapp completion fish >> ~/.config/fish/completions/myapp.fish
+```
+
+After adding the script, source the file (or restart your shell):
+
+```bash
+source ~/.bashrc
+# or
+source ~/.zshrc
+# or just restart your terminal for fish
+```
+
+The generated script completes the running executable automatically — no manual substitution needed. Set `ExecutableName` when the binary is invoked under another name.
+
+### How It Works
+
+Completion uses two commands internally:
+
+- `completion` (or your configured public name) generates shell integration scripts.
+- `__completion` is an internal hidden resolver command used by generated scripts at runtime.
+
+The shell tokenizes the line, so the resolver is called with the words it parsed and the index of the word being completed:
+
+```bash
+myapp __completion 2 -- myapp deploy pro
+```
+
+The resolver resolves suggestions from your registered command metadata (command names, arguments, and options) and returns one per line, as `value` or `value<TAB>description`. Each generated script then filters, escapes and inserts them the way its own shell requires.
+
+Both `--option value` and `--option=value` are completed, and a value given to an option is not counted as a positional argument. After the `--` end-of-options separator, every word is completed as a positional value and option names are never suggested. A failing suggestion callback yields no suggestions, so it never leaks into the shell.
+
+Quoting is handled by the shell, which passes the word at the cursor already unquoted: `"my value"`, `'my value'` and `my\ value` are completed as a single word, and an unclosed quote is the word being typed. Values containing spaces are completed and escaped as the typed word requires.
+
+Short options are completed as clusters, mirroring how they are parsed: `-fv` extends a cluster of value-less shortcuts, and when the last shortcut takes a value, that value is completed either inside the same word (`-oval1`) or as the next one (`-fo val1`).
+
+Command and option name suggestions carry the description you defined for them. Zsh and fish display it next to the value, bash drops it — readline has nowhere to show it.
+
+### Dynamic Value Suggestions
+
+Suggestions are attached directly to option and argument definitions with `Option.suggest` and `Argument.suggest`:
+
+```fsharp
+command "deploy" {
+    Description = "Deploy command"
+    Help = None
+    Arguments = [
+        Argument.required "target" "Deployment target"
+        |> Argument.suggest (Suggest.sync (fun ctx -> getTargets ctx.CurrentWord))
+    ]
+    Options = [
+        Option.required "env" (Some "e") "Environment" ""
+        |> Option.suggest (Suggest.values ["dev"; "staging"; "prod"])
+    ]
+    Initialize = None
+    Interact = None
+    Execute = Execute <| fun (_, _) -> ExitCode.Success
+}
+```
+
+Built-in suggestion sources:
+
+```fsharp
+Option.required "path" None "Path" ""
+|> Option.suggest Suggest.files
+
+Option.required "dir" None "Directory" ""
+|> Option.suggest Suggest.directories
+
+Option.required "project" None "Project file" ""
+|> Option.suggest (Suggest.filesWithExtension [".fsproj"; ".csproj"])
+```
+
+Suggestion sources are composable:
+
+```fsharp
+Suggest.values ["dev"; "staging"; "prod"]
+|> Suggest.map String.toUpperInvariant
+|> Suggest.filter (fun value -> value <> "PROD")
+```
+
+Available combinators:
+
+- `Suggest.map`
+- `Suggest.mapAsync`
+- `Suggest.filter`
+- `Suggest.filterAsync`
+
+Values may carry a description of their own, shown by the shells able to display it:
+
+```fsharp
+Option.required "env" (Some "e") "Environment" ""
+|> Option.suggest (Suggest.describedValues ["dev", "Development"; "prod", "Production"])
+```
+
+### Controlling Visibility
+
+Set `IsVisible = false` to hide the completion command from `list` and `help` output while still allowing the shell to invoke it:
+
+```fsharp
+enableCompletion { CompletionConfig.defaults with IsVisible = false }
+```
+
+### Limitations
+
+- **PowerShell not supported**: PowerShell shell completion is not yet supported.
+- **No descriptions in bash**: readline shows the value only, so descriptions are dropped by the bash script.
+- **Escaped display in bash**: when several suggestions match, bash lists them escaped (`my\ value`), since the escaping is what makes the inserted word correct.
+- **bash 3 quoting**: the bash script takes the unquoted word at the cursor from `$2`, which needs bash 4 or newer. On bash 3 (the version shipped with macOS) a word with a quote in it is passed to the resolver as typed.
 
 ## Tips
 

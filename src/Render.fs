@@ -30,9 +30,22 @@ module internal Render =
 
             let baseDir = AppDomain.CurrentDomain.BaseDirectory
             let executableFileName = AppDomain.CurrentDomain.FriendlyName
-            let currentDir = Environment.CurrentDirectory
 
-            let relativePath = baseDir.Replace(currentDir, "").TrimStart '/'
+            let relativePath =
+                let trimmedBaseDir = baseDir.TrimEnd '/'
+                let pathSegments = trimmedBaseDir.Split '/'
+                let executableSegmentIndex =
+                    pathSegments
+                    |> Array.tryFindIndexBack ((=) executableFileName)
+
+                match executableSegmentIndex with
+                | Some index when index + 1 < pathSegments.Length ->
+                    pathSegments[(index + 1) ..]
+                    |> String.concat "/"
+                    |> String.append "/"
+                | _ ->
+                    baseDir.Replace(Environment.CurrentDirectory, "").TrimStart '/'
+
             let commandName = commandName |> CommandName.value
 
             [

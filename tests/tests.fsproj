@@ -23,6 +23,7 @@
     <Compile Include="ArgsTests.fs" />
     <Compile Include="CommandDefinitionTests.fs" />
     <Compile Include="DefaultCommandsTests.fs" />
+    <Compile Include="CompletionTests.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 

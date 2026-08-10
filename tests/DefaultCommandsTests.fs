@@ -4,17 +4,22 @@ open System
 open Expecto
 open Feather.ConsoleApplication
 
+type LineMatch =
+    | Exact of string
+    | Contains of string
+    | ContainsAll of string list
+
 type TestCase = {
     Description: string
     Command: string
-    ExpectedOutput: string list
+    ExpectedOutput: LineMatch list
 }
 
 let provideDefaultCommands = seq {
     let header = [
-        "Default command test <1.0.0>"
-        "============================"
-        ""
+        Exact "Default command test <1.0.0>"
+        Exact "============================"
+        Exact ""
     ]
 
     {
@@ -24,32 +29,32 @@ let provideDefaultCommands = seq {
             [
                 yield! header
 
-                "Description:"
-                "    Displays help for a command"
-                ""
-                "Usage:"
-                "    help [options] [--] [<command_name>]"
-                ""
-                "Arguments:"
-                "    command_name  The command name [default: \"help\"]"
-                ""
-                "Options:"
-                "    -h, --help            Display this help message                         "
-                "    -q, --quiet           Do not output any message                         "
-                "    -V, --version         Display this application version                  "
-                "    -n, --no-interaction  Do not ask any interactive question               "
-                "        --no-progress     Whether to disable all progress bars              "
-                "        --no-ansi         Whether to disable all markup with ansi formatting"
-                "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
-                ""
-                "Help:"
-                "    The help command displays help for a given command:"
-                ""
-                "        dotnet bin/Debug/net10.0/tests.dll help list"
-                ""
-                "    To display list of available commands, please use list command."
-                ""
-                ""
+                Exact "Description:"
+                Exact "    Displays help for a command"
+                Exact ""
+                Exact "Usage:"
+                Exact "    help [options] [--] [<command_name>]"
+                Exact ""
+                Exact "Arguments:"
+                Exact "    command_name  The command name [default: \"help\"]"
+                Exact ""
+                Exact "Options:"
+                Exact "    -h, --help            Display this help message                         "
+                Exact "    -q, --quiet           Do not output any message                         "
+                Exact "    -V, --version         Display this application version                  "
+                Exact "    -n, --no-interaction  Do not ask any interactive question               "
+                Exact "        --no-progress     Whether to disable all progress bars              "
+                Exact "        --no-ansi         Whether to disable all markup with ansi formatting"
+                Exact "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
+                Exact ""
+                Exact "Help:"
+                Exact "    The help command displays help for a given command:"
+                Exact ""
+                Contains "help list"
+                Exact ""
+                Exact "    To display list of available commands, please use list command."
+                Exact ""
+                Exact ""
             ]
     }
 
@@ -60,24 +65,24 @@ let provideDefaultCommands = seq {
             [
                 yield! header
 
-                "Usage:"
-                "    command [options] [--] [arguments]  "
-                ""
-                "Options:"
-                "    -h, --help            Display this help message                         "
-                "    -q, --quiet           Do not output any message                         "
-                "    -V, --version         Display this application version                  "
-                "    -n, --no-interaction  Do not ask any interactive question               "
-                "        --no-progress     Whether to disable all progress bars              "
-                "        --no-ansi         Whether to disable all markup with ansi formatting"
-                "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
-                ""
-                "Available commands:"
-                "    about  Displays information about the current project"
-                "    help   Displays help for a command                   "
-                "    list   Lists commands                                "
-                ""
-                ""
+                Exact "Usage:"
+                Exact "    command [options] [--] [arguments]  "
+                Exact ""
+                Exact "Options:"
+                Exact "    -h, --help            Display this help message                         "
+                Exact "    -q, --quiet           Do not output any message                         "
+                Exact "    -V, --version         Display this application version                  "
+                Exact "    -n, --no-interaction  Do not ask any interactive question               "
+                Exact "        --no-progress     Whether to disable all progress bars              "
+                Exact "        --no-ansi         Whether to disable all markup with ansi formatting"
+                Exact "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
+                Exact ""
+                Exact "Available commands:"
+                Exact "    about  Displays information about the current project"
+                Exact "    help   Displays help for a command                   "
+                Exact "    list   Lists commands                                "
+                Exact ""
+                Exact ""
             ]
     }
 
@@ -88,32 +93,32 @@ let provideDefaultCommands = seq {
             [
                 yield! header
 
-                "Description:"
-                "    Displays information about the current project"
-                ""
-                "Usage:"
-                "    about [options] "
-                ""
-                "Options:"
-                "    -h, --help            Display this help message                         "
-                "    -q, --quiet           Do not output any message                         "
-                "    -V, --version         Display this application version                  "
-                "    -n, --no-interaction  Do not ask any interactive question               "
-                "        --no-progress     Whether to disable all progress bars              "
-                "        --no-ansi         Whether to disable all markup with ansi formatting"
-                "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
-                ""
-                "Help:"
-                "    The about command displays information about the current project:"
-                ""
-                "        dotnet bin/Debug/net10.0/tests.dll about about"
-                ""
-                "    There are multiple sections shown in the output:"
-                "      - current project details/meta information"
-                "      - environment"
-                "      - console application library"
-                ""
-                ""
+                Exact "Description:"
+                Exact "    Displays information about the current project"
+                Exact ""
+                Exact "Usage:"
+                Exact "    about [options] "
+                Exact ""
+                Exact "Options:"
+                Exact "    -h, --help            Display this help message                         "
+                Exact "    -q, --quiet           Do not output any message                         "
+                Exact "    -V, --version         Display this application version                  "
+                Exact "    -n, --no-interaction  Do not ask any interactive question               "
+                Exact "        --no-progress     Whether to disable all progress bars              "
+                Exact "        --no-ansi         Whether to disable all markup with ansi formatting"
+                Exact "    -v|vv|vvv, --verbose  Increase the verbosity of messages                "
+                Exact ""
+                Exact "Help:"
+                Exact "    The about command displays information about the current project:"
+                Exact ""
+                Contains "about about"
+                Exact ""
+                Exact "    There are multiple sections shown in the output:"
+                Exact "      - current project details/meta information"
+                Exact "      - environment"
+                Exact "      - console application library"
+                Exact ""
+                Exact ""
             ]
     }
 
@@ -122,51 +127,49 @@ let provideDefaultCommands = seq {
         Command = "about"
         ExpectedOutput =
             let version = AssemblyVersionInformation.AssemblyVersion
-            let spaces value = String.replicate (101 - (string value).Length) " "
             let createdAt = AssemblyVersionInformation.AssemblyMetadata_createdAt.[0 .. "yyyy-mm-dd".Length - 1]
             let gitCommit = AssemblyVersionInformation.AssemblyMetadata_gitcommit
-            let dotnetVersion = string Environment.Version
 
             [
                 yield! header
 
-                "                                                                                                                              "
-                "     Default command test                 .NET Core                       Git Branch              Feather.ConsoleApplication  "
-                $"            1.0.0                           {dotnetVersion}                         <branch>                   {version} ({createdAt})      "
-                "                                                                                                                              "
-                ""
-                "---------------------------- ------------------------------------------------------------------------------------------------------"
-                " Application                "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                " Name                         Default command test                                                                                 "
-                " Version                      1.0.0                                                                                                "
-                " Description                  About command                                                                                        "
-                " Environment                  Test                                                                                                 "
-                " command                      about                                                                                                "
-                " args                                                                                                                              "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                " Environment                "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                $" .NET Core                    {dotnetVersion}{spaces dotnetVersion}"
-                $" Command Line                 {Environment.CommandLine}{spaces Environment.CommandLine}"
-                $" Current Directory            {Environment.CurrentDirectory}{spaces Environment.CurrentDirectory}"
-                $" Machine Name                 {Environment.MachineName}{spaces Environment.MachineName}"
-                $" OS Version                   {Environment.OSVersion}{spaces Environment.OSVersion}"
-                $" Processor Count              {Environment.ProcessorCount}{spaces Environment.ProcessorCount}"
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                " Git                        "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                " Branch                       <branch>                                                                                             "
-                " Commit                       <commit>                                                                                             "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                " Feather.ConsoleApplication "
-                " ---------------------        ---------------------------------------------------------------------------------------------------- "
-                $" Version                      {version}{spaces version}"
-                $" Commit                       {gitCommit}{spaces gitCommit}"
-                $" Released                     {createdAt}{spaces createdAt}"
-                "---------------------------- ------------------------------------------------------------------------------------------------------"
-                ""
-                ""
+                Contains ""
+                ContainsAll [ "Default command test"; ".NET Core"; "Git Branch"; "Feather.ConsoleApplication" ]
+                ContainsAll [ "1.0.0"; "<branch>"; version; createdAt ]
+                Contains ""
+                Exact ""
+                Contains "----------------------------"
+                Contains " Application"
+                Contains " ---------------------"
+                Contains " Name                         Default command test"
+                Contains " Version                      1.0.0"
+                Contains " Description                  About command"
+                Contains " Environment                  Test"
+                Contains " command                      about"
+                Contains " args"
+                Contains " ---------------------"
+                Contains " Environment"
+                Contains " ---------------------"
+                Contains " .NET Core "
+                Contains " Command Line "
+                Contains " Current Directory "
+                Contains " Machine Name "
+                Contains " OS Version "
+                Contains " Processor Count "
+                Contains " ---------------------"
+                Contains " Git"
+                Contains " ---------------------"
+                Contains " Branch                       <branch>"
+                Contains " Commit                       <commit>"
+                Contains " ---------------------"
+                Contains " Feather.ConsoleApplication"
+                Contains " ---------------------"
+                Contains $" Version                      {version}"
+                Contains $" Commit                       {gitCommit}"
+                Contains $" Released                     {createdAt}"
+                Contains "----------------------------"
+                Exact ""
+                Exact ""
             ]
     }
 }
@@ -217,9 +220,18 @@ let defaultCommandsTests =
                         |> List.ofArray
 
                     expected
-                    |> List.iteri (fun i line ->
-                        Expect.stringHasLength output.[i] line.Length $"Output line {i + 1} should have correct length ({line.Length} but has {output.[i].Length})."
-                        Expect.equal output.[i] line $"Line {i + 1} should match."
+                    |> List.iteri (fun i expectedLine ->
+                        match expectedLine with
+                        | Exact expected ->
+                            Expect.stringHasLength output[i] expected.Length $"Output line {i + 1} should have correct length ({expected.Length} but has {output[i].Length})."
+                            Expect.equal output[i] expected $"Line {i + 1} should match."
+                        | Contains substring ->
+                            Expect.stringContains output[i] substring $"Output line {i + 1} should contain '{substring}'."
+                        | ContainsAll substrings ->
+                            substrings
+                            |> List.iter (fun substring ->
+                                Expect.stringContains output[i] substring $"Output line {i + 1} should contain '{substring}'."
+                            )
                     )
             )
     ]

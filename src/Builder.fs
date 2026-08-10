@@ -21,6 +21,7 @@ type internal DefinitionParts = {
     Commands: Commands
     DefaultCommand: CommandName
     OptionDecorationLevel: OptionDecorationLevel
+    Completion: CompletionConfig option
 }
 
 [<RequireQualifiedAccess>]
@@ -46,6 +47,7 @@ module internal DefinitionParts =
             Commands = Map.empty
             DefaultCommand = CommandName (Name CommandNames.List)
             OptionDecorationLevel = Minimal
+            Completion = None
         }
 
     let output { Output = output } = output
@@ -229,10 +231,19 @@ type ConsoleApplicationBuilder<'Application> internal (buildApplication: Definit
                 return parts
             }
 
+    [<CustomOperation("enableCompletion")>]
+    member _.EnableCompletion(state): Definition =
+        state <!> fun parts -> { parts with Completion = Some CompletionConfig.defaults }
+
+    [<CustomOperation("enableCompletion")>]
+    member _.EnableCompletion(state, config: CompletionConfig): Definition =
+        state <!> fun parts -> { parts with Completion = Some config }
+
 [<RequireQualifiedAccess>]
 module internal ConsoleApplicationBuilder =
     let buildApplication showHelpForCommand (Definition definition) =
-        definition <!> (fun parts ->
+        definition
+        |> Result.bind (fun parts -> result {
             let showHelpForCommand = showHelpForCommand parts.Output parts.OptionDecorationLevel parts.ApplicationOptions
             let aboutCommand = Commands.aboutCommand parts.Meta
 
@@ -247,11 +258,22 @@ module internal ConsoleApplicationBuilder =
                 ]
                 |> Map.ofList
 
-            { parts with
-                Commands = commands
-                    |> Commands.add CommandNames.List (Commands.listCommand parts.ApplicationOptions commands)
-                    |> Commands.add CommandNames.Help (Commands.helpCommand showHelpForCommand commands)
-                    |> Commands.add CommandNames.About aboutCommand
-            }
-        )
+            // Dispatch commands can be run by the app, discovery commands are the ones shown by list/help.
+            let! dispatchCommands, discoveryCommands =
+                match parts.Completion with
+                | None -> Ok (commands, commands)
+                | Some config ->
+                    let userCommandNames = parts.Commands |> Map.toList |> List.map (fst >> CommandName.value)
+                    config
+                    |> Completion.Setup.validateConfig userCommandNames
+                    |> Result.bind (fun () -> commands |> Completion.Setup.wire config parts.ApplicationOptions)
+
+            let finalCommands =
+                dispatchCommands
+                |> Commands.add CommandNames.List (Commands.listCommand parts.ApplicationOptions discoveryCommands)
+                |> Commands.add CommandNames.Help (Commands.helpCommand showHelpForCommand discoveryCommands)
+                |> Commands.add CommandNames.About aboutCommand
+
+            return { parts with Commands = finalCommands }
+        })
         |> ConsoleApplication
