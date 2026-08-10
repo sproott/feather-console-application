@@ -20,6 +20,7 @@ type internal DefinitionParts = {
     Ask: string -> string
     Commands: Commands
     DefaultCommand: CommandName
+    FallbackCommand: CommandName option
     OptionDecorationLevel: OptionDecorationLevel
 }
 
@@ -45,6 +46,7 @@ module internal DefinitionParts =
             Ask = output.Ask
             Commands = Map.empty
             DefaultCommand = CommandName (Name CommandNames.List)
+            FallbackCommand = None
             OptionDecorationLevel = Minimal
         }
 
@@ -162,6 +164,18 @@ type ConsoleApplicationBuilder<'Application> internal (buildApplication: Definit
                     |> CommandName.create <@> ConsoleApplicationError.CommandNameError
 
                 return { parts with DefaultCommand = commandName }
+            }
+
+    /// Fallback command is run with all the given args, when the first argument does not match any command name.
+    [<CustomOperation("fallbackCommand")>]
+    member _.FallbackCommand(state, fallbackCommand): Definition =
+        state >>= fun parts ->
+            result {
+                let! commandName =
+                    fallbackCommand
+                    |> CommandName.create <@> ConsoleApplicationError.CommandNameError
+
+                return { parts with FallbackCommand = Some commandName }
             }
 
     /// <summary>

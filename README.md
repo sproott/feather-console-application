@@ -171,6 +171,7 @@ Command: `dotnet example.dll my:first-command --help`
 | showOptions | `OptionDecorationLevel` | It will define, how options will be shown in the command help output. (Default is `Minimal`) |
 | command | `commandName: string`, `CommandDefinition` | It will register a command to the application. |
 | defaultCommand | `commandName: string` | It will set a name of default command. Default command is run when no command name is pass to the arguments. (_Default is `list`._) |
+| fallbackCommand | `commandName: string` | It will set a name of fallback command. Fallback command is run with all the given arguments, when the first argument does not match any command name - it allows a command-less `executable <value>` usage. (_Default is none - an unknown command name results in an error._) |
 | useOutput | `Output` | It will override `Output` in `IO`, which gets every command life-cycle function. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-style)_) |
 | useAsk | `question: string -> answer: string` | It will override an Ask function, which is used in `Interact` life-cycle stage. (_Default is implemented by [ConsoleStyle](https://github.com/FeatherTools/console-application#ask))_ |
 | updateOutput | `Output -> Output` | Function which allows to change the output (set style, different outputInterface for a ConsoleStyle and more) |
