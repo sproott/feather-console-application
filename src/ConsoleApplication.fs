@@ -156,6 +156,31 @@ module MFConsoleApplication =
                         |]
                     | _ -> args
 
+                let args =
+                    match parts.FallbackCommand with
+                    | Some fallbackCommand ->
+                        let isKnownCommand rawName =
+                            match rawName |> CommandName.createInRuntime with
+                            | Ok name ->
+                                match parts.Commands |> Commands.find name with
+                                | NoCommand _ -> false
+                                | _ -> true
+                            | Error _ -> false
+
+                        let firstPositionalArg =
+                            args
+                            |> Array.takeWhile ((<>) Arguments.Separator)
+                            |> Array.tryFind (Option.isOptionOrShortcut >> not)
+
+                        match firstPositionalArg with
+                        | Some commandCandidate when commandCandidate |> isKnownCommand -> args
+                        | _ ->
+                            [|
+                                yield fallbackCommand |> CommandName.value
+                                yield! args
+                            |]
+                    | None -> args
+
                 match args with
                 | Args.ContainsOption OptionsDefinitions.help ->
                     parts |> showApplicationInfo

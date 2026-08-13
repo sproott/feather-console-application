@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `fallbackCommand` to allow a command-less `executable <value>` usage - the fallback command is run with all the given arguments, when the first argument does not match any command name
 
 - Shell completion support (opt-in) for bash, zsh, and fish
   - `enableCompletion` CE operation in `consoleApplication { }` builder
