@@ -36,12 +36,14 @@ type Argument = private {
     ArgumentName: ArgumentName
     Description: string
     Value: ArgumentValueDefinition
+    Suggest: Suggest option
 }
 
 type RawArgumentDefinition = internal {
     ArgumentName: ArgumentName
     Description: string
     Value: ArgumentValueDefinition
+    Suggest: Suggest option
 }
 
 [<RequireQualifiedAccess>]
@@ -60,6 +62,7 @@ module internal RawArgumentDefinition =
                 ArgumentName = name
                 Description = description
                 Value = value
+                Suggest = None
             }
         }
 
@@ -86,12 +89,17 @@ module Argument =
     let optionalArray name description defaultValue =
         create name description (ArgumentValueDefinition.Array defaultValue)
 
+    /// Attach completion suggestions to an argument definition.
+    let suggest (suggestion: Suggest) (def: Result<RawArgumentDefinition, ArgumentDefinitionError>): Result<RawArgumentDefinition, ArgumentDefinitionError> =
+        def |> Result.map (fun d -> { d with Suggest = Some suggestion })
+
     //
     // Internal Argument functions
     //
     let internal name ({ ArgumentName = name }: Argument) = name
     let internal nameValue = name >> ArgumentName.value
     let internal valueDefinition ({ Value = value }: Argument) = value
+    let internal suggestion ({ Suggest = suggest }: Argument) = suggest
 
     let internal usage ({ ArgumentName = name; Value = definition }: Argument) =
         name
@@ -183,6 +191,7 @@ module internal ArgumentsDefinitions =
             ArgumentName = raw.ArgumentName
             Description = raw.Description
             Value = raw.Value
+            Suggest = raw.Suggest
         }
 
     let validate (arguments: RawArgumentDefinition list) =

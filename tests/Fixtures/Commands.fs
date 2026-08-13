@@ -145,3 +145,64 @@ let commandSeven executeCallback: CommandDefinition =
             executeCallback input
             ExitCode.Success
     }
+
+let commandWith arguments options: CommandDefinition =
+    {
+        Description = "Test command"
+        Help = None
+        Arguments = arguments
+        Options = options
+        Initialize = None
+        Interact = None
+        Execute = Execute <| fun (_, _) -> ExitCode.Success
+    }
+
+let commandWithSuggestedInput =
+    commandWith
+        [
+            Argument.required "target" "Target"
+            |> Argument.suggest (Suggest.values [ "alpha"; "beta" ])
+        ]
+        [
+            Option.required "opt1" (Some "o") "Option one" ""
+            |> Option.suggest (Suggest.values [ "val1"; "val2" ])
+
+            Option.required "opt1-extra" None "Option one extra" ""
+        ]
+
+let commandWithClusteredShortcuts =
+    commandWith
+        [
+            Argument.required "target" "Target"
+            |> Argument.suggest (Suggest.values [ "alpha"; "beta" ])
+        ]
+        [
+            Option.noValue "foo" (Some "f") "Flag foo"
+            Option.noValue "loud" (Some "l") "Flag loud"
+
+            Option.required "opt1" (Some "o") "Option one" ""
+            |> Option.suggest (Suggest.values [ "val1"; "val2" ])
+        ]
+
+let commandWithTwoSuggestedArguments =
+    commandWith
+        [
+            Argument.required "first" "First"
+            |> Argument.suggest (Suggest.values [ "alpha"; "beta" ])
+
+            Argument.required "second" "Second"
+            |> Argument.suggest (Suggest.values [ "one"; "two" ])
+        ]
+        [
+            Option.required "opt1" (Some "o") "Option one" ""
+            |> Option.suggest (Suggest.values [ "val1"; "val2" ])
+        ]
+
+let commandWithSpacedSuggestions =
+    commandWith
+        [
+            Argument.required "target" "Target"
+            |> Argument.suggest (Suggest.values [ "my value"; "my other value"; "plain" ])
+        ]
+        []
+

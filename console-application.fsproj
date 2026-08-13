@@ -24,10 +24,18 @@
   <ItemGroup>
     <Compile Include="src/Utils.fs" />
     <Compile Include="src/Types.fs" />
+    <Compile Include="src/Suggest.fs" />
     <Compile Include="src/Arguments.fs" />
     <Compile Include="src/Options.fs" />
     <Compile Include="src/Input.fs" />
     <Compile Include="src/Command.fs" />
+    <Compile Include="src/Completion/Shell.fs" />
+    <Compile Include="src/Completion/Words.fs" />
+    <Compile Include="src/Completion/Definitions.fs" />
+    <Compile Include="src/Completion/Suggestions.fs" />
+    <Compile Include="src/Completion/ShellScript.fs" />
+    <Compile Include="src/Completion/CompletionConfig.fs" />
+    <Compile Include="src/Completion/Setup.fs" />
     <Compile Include="src/Progress.fs" />
     <Compile Include="src/Builder.fs" />
     <Compile Include="src/Render.fs" />

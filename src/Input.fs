@@ -34,6 +34,7 @@ module Input =
         OptionDefinitions = []
     }
 
+    [<TailCall>]
     let rec internal parse output allArgumentDefinitions definitionsToParse (input: ParsedInput) (args: InputValue list) =
         let (optionDefinitions: OptionsDefinitions, argumentDefinitions: ArgumentsDefinitions) = definitionsToParse
         let debug = debug output
@@ -213,11 +214,11 @@ module Input =
                     | OptionValueDefinition.ValueIsArray _ -> OptionValue.ValueIsArray [value]
                     | OptionValueDefinition.ValueRequiredArray _ ->
                         match value with
-                        | String.IsNullOrEmpty -> failwithf "The \"%s\" option does not accept an empty value." option
+                        | String.IsNullOrEmpty -> failwithf "The \"%s\" option does not accept an empty value in a list." option
                         | value -> OptionValue.ValueRequiredArray [value]
 
                 { input with Options = input.Options.Add(option, value) }
-            | _ -> failwithf "The \"--%s\" option does not exists." option
+            | _ -> failwithf "The \"--%s\" option does not exists, a value cannot be set." option
 
         /// Set a list value for an option with array value or fail with exception when option is not defined.
         /// You can set only a list value, if you want to set a single value for option, use `Input.setOptionValue` instead.
@@ -226,7 +227,7 @@ module Input =
             | OptionsDefinitions.HasDefinedOption option definition ->
                 let value =
                     match definition.Value with
-                    | OptionValueDefinition.ValueNone -> failwithf "The \"%s\" option does not accept any value." option
+                    | OptionValueDefinition.ValueNone -> failwithf "The \"%s\" option does not accept a list of values." option
                     | OptionValueDefinition.ValueIsArray _ -> OptionValue.ValueIsArray values
                     | OptionValueDefinition.ValueRequiredArray _ ->
                         match values with
@@ -236,7 +237,7 @@ module Input =
                     | OptionValueDefinition.ValueOptional _ -> failwithf "The \"%s\" option does not accept a list value. Use `Input.setOptionValue` instead." option
 
                 { input with Options = input.Options.Add(option, value) }
-            | _ -> failwithf "The \"--%s\" option does not exists." option
+            | _ -> failwithf "The \"--%s\" option does not exists, a list value cannot be set." option
 
 
     [<RequireQualifiedAccess>]
@@ -336,11 +337,11 @@ module Input =
                     | ArgumentValueDefinition.Array _ -> ArgumentValue.Array [value]
                     | ArgumentValueDefinition.RequiredArray ->
                         match value with
-                        | String.IsNullOrEmpty -> failwithf "The \"%s\" argument does not accept an empty value." argument
+                        | String.IsNullOrEmpty -> failwithf "The \"%s\" argument does not accept an empty value in a list." argument
                         | value -> ArgumentValue.RequiredArray (NotEmptyList.ofListWithValues [value])
 
                 { input with Arguments = input.Arguments.Add(argument, value) }
-            | _ -> failwithf "The \"%s\" argument does not exists." argument
+            | _ -> failwithf "The \"%s\" argument does not exists, a value cannot be set." argument
 
         /// Set a list value for an array argument or fail with exception when argument is not defined.
         /// You can set only a list value, if you want to set a single value for argument, use `Input.setArgumentValue` instead.
@@ -358,7 +359,7 @@ module Input =
                     | ArgumentValueDefinition.Optional _ -> failwithf "The \"%s\" argument does not accept a list value. Use `Input.setArgumentValue` instead." argument
 
                 { input with Arguments = input.Arguments.Add(argument, value) }
-            | _ -> failwithf "The \"%s\" argument does not exists." argument
+            | _ -> failwithf "The \"%s\" argument does not exists, a list value cannot be set." argument
 
     let internal getCommandName input =
         input

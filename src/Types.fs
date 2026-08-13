@@ -464,20 +464,37 @@ type ConsoleApplicationError =
 
 [<RequireQualifiedAccess>]
 module internal ConsoleApplicationError =
-    let rec format showDetails = function
+    // Worklist recursion keeps the traversal tail-recursive, which the lint gate requires of every `rec`.
+    [<TailCall>]
+    let rec private formatPending showDetails pending acc =
+        match pending with
+        | [] -> List.rev acc
+        | current :: rest ->
+            match current with
+            | CommandError.Exception ex ->
+                let message =
+                    if showDetails then
+                        sprintf "%A" ex
+                    else
+                        ex.Message
+
+                formatPending showDetails rest (message :: acc)
+            | CommandError.Message message ->
+                formatPending showDetails rest (message :: acc)
+            | CommandError.Errors errors ->
+                formatPending showDetails (errors @ rest) acc
+
+    let private formatCommandError showDetails (error: CommandError) =
+        formatPending showDetails [ error ] []
+
+    let format showDetails = function
         | ConsoleApplicationError.ArgsError error -> [ ArgsError.format error ]
         | ConsoleApplicationError.CommandNameError error -> [ CommandNameError.format error ]
         | ConsoleApplicationError.ApplicationNameError error -> [ ApplicationNameError.format error ]
         | ConsoleApplicationError.CommandDefinitionError error -> CommandDefinitionError.format error
-        | ConsoleApplicationError.ConsoleApplicationException error
-        | ConsoleApplicationError.CommandError (CommandError.Exception error) ->
-            [
-                if showDetails then
-                    sprintf "%A" error
-                else
-                    error.Message
-            ]
-        | ConsoleApplicationError.CommandError (CommandError.Message error) -> [ error ]
-        | ConsoleApplicationError.CommandError (CommandError.Errors errors) ->
-            errors
-            |> List.collect (ConsoleApplicationError.CommandError >> format showDetails)
+        | ConsoleApplicationError.ConsoleApplicationException error ->
+            CommandError.Exception error
+            |> formatCommandError showDetails
+        | ConsoleApplicationError.CommandError error ->
+            error
+            |> formatCommandError showDetails

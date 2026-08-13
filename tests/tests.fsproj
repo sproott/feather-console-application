@@ -23,6 +23,10 @@
     <Compile Include="ArgsTests.fs" />
     <Compile Include="CommandDefinitionTests.fs" />
     <Compile Include="DefaultCommandsTests.fs" />
+    <Compile Include="SuggestTests.fs" />
+    <Compile Include="CompletionWordsTests.fs" />
+    <Compile Include="CompletionResolveTests.fs" />
+    <Compile Include="CompletionSetupTests.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 

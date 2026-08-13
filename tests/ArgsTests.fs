@@ -26,9 +26,6 @@ let expect options arguments =
 let provideArgs = seq {
     let messageFromInteraction = "message", OptionValue.ValueOptional (Some "from-interaction")
 
-    //
-    // cases without separator --
-    //
     yield {
         Description = "No arguments and empty options with interaction"
         Command = "one"
@@ -198,9 +195,6 @@ let provideArgs = seq {
         ]
     }
 
-    //
-    // cases with separator --
-    //
     yield {
         Description = "Argument and empty options with interaction, with separator"
         Command = "one"
@@ -479,9 +473,6 @@ let provideArgs = seq {
             |> ExpectedError
     }
 
-    //
-    // Cases for using multi shortcuts and other options combinations
-    //
     yield {
         Description = "Simple option value with `=`"
         Command = "six"
@@ -619,11 +610,6 @@ let provideArgs = seq {
                 [ "arg", ArgumentValue.Optional None ]
     }
 
-    //
-    // Cases for default options
-    //
-
-    // Cases with no-interaction
     yield {
         Description = "No arguments and empty options with no-interaction shortuct"
         Command = "one"
@@ -649,7 +635,6 @@ let provideArgs = seq {
         ]
     }
 
-    // cases for version/verbosity
     yield {
         Description = "Match version by shortcut - and do not run execute"
         Command = "one"
@@ -712,7 +697,6 @@ let provideArgs = seq {
         ]
     }
 
-    // Cases for a common scenarious
     yield {
         Description = "Use command 7 without any input"
         Command = "seven"
