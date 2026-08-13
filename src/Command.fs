@@ -184,6 +184,23 @@ module internal Commands =
         |> format
         |> output.GroupedOptions CommandName.NamespaceSeparator "Available commands:"
 
+    let private showUsage (output: Output) =
+        output.SimpleOptions "Usage:" [
+            [ "command [options] [--] [arguments]"; "" ]
+        ]
+
+    let private showOptions (output: Output) applicationOptions =
+        applicationOptions
+        |> OptionsDefinitions.format
+        |> output.SimpleOptions "Options:"
+
+    let showApplicationHelp (output: Output) applicationOptions commands =
+        showUsage output
+        showOptions output applicationOptions
+
+        commands
+        |> showAvailable output
+
     let add name command (commands: Commands) =
         commands.Add (CommandName (Name name), command)
 
@@ -361,16 +378,6 @@ module internal Commands =
             Initialize = None
             Interact = None
             Execute = Execute <| fun (input, output) ->
-                let showUsage () =
-                    output.SimpleOptions "Usage:" [
-                        [ "command [options] [--] [arguments]"; "" ]
-                    ]
-
-                let showOptions () =
-                    applicationOptions
-                    |> OptionsDefinitions.format
-                    |> output.SimpleOptions "Options:"
-
                 match input with
                 | Input.Argument.OptionalValue "namespace" namespaceToList ->
                     match commands |> byNamespace namespaceToList with
@@ -378,8 +385,8 @@ module internal Commands =
                         output.Error <| sprintf "There are no commands defined in the \"%s\" namespace.\n" namespaceToList
                         ExitCode.Error
                     | commandsByNamespace ->
-                        showUsage()
-                        showOptions()
+                        showUsage output
+                        showOptions output applicationOptions
 
                         commandsByNamespace
                         |> format
@@ -387,11 +394,7 @@ module internal Commands =
 
                         ExitCode.Success
                 | _ ->
-                    showUsage()
-                    showOptions()
-
-                    commands
-                    |> showAvailable output
+                    showApplicationHelp output applicationOptions commands
 
                     ExitCode.Success
         }

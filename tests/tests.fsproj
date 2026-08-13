@@ -24,6 +24,7 @@
     <Compile Include="CommandDefinitionTests.fs" />
     <Compile Include="FallbackCommandTests.fs" />
     <Compile Include="DefaultCommandsTests.fs" />
+    <Compile Include="ApplicationHelpTests.fs" />
     <Compile Include="SuggestTests.fs" />
     <Compile Include="CompletionWordsTests.fs" />
     <Compile Include="CompletionResolveTests.fs" />
