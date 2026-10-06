@@ -1,0 +1,113 @@
+lockfile_version: '1'
+dependencies: []
+deployments:
+- kind: project-relative
+  target: claude
+  value: .claude/skills/feather-console-application
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/feather-console-application/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:59977332291a6707355c7b13e703de7c2c2d2b8f13b04bf8f7b0c16667d08778
+- kind: project-relative
+  target: claude
+  value: .claude/skills/feather-console-application/references/anti-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5ebafd9ad81f8fa49a642a9434b9ab8bbc0d8fa4479706c824d64b1811adb9b4
+- kind: project-relative
+  target: claude
+  value: .claude/skills/feather-console-application/references/examples.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ff5d22907de005ddb7968244147b19f7f3b33bfe64e56f387e52ad62be566d22
+- kind: project-relative
+  target: claude
+  value: .claude/skills/feather-console-application/references/preferred-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a68560782391de7eff44268aea0e5c3edbd8847125b6781c17a5b3ad7ed42b1a
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/feather-console-application
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/feather-console-application/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:59977332291a6707355c7b13e703de7c2c2d2b8f13b04bf8f7b0c16667d08778
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/feather-console-application/references/anti-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5ebafd9ad81f8fa49a642a9434b9ab8bbc0d8fa4479706c824d64b1811adb9b4
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/feather-console-application/references/examples.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ff5d22907de005ddb7968244147b19f7f3b33bfe64e56f387e52ad62be566d22
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/feather-console-application/references/preferred-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a68560782391de7eff44268aea0e5c3edbd8847125b6781c17a5b3ad7ed42b1a
+local_deployed_files:
+- .agents/skills/feather-console-application
+- .agents/skills/feather-console-application/SKILL.md
+- .agents/skills/feather-console-application/references/anti-patterns.md
+- .agents/skills/feather-console-application/references/examples.md
+- .agents/skills/feather-console-application/references/preferred-patterns.md
+- .claude/skills/feather-console-application
+- .claude/skills/feather-console-application/SKILL.md
+- .claude/skills/feather-console-application/references/anti-patterns.md
+- .claude/skills/feather-console-application/references/examples.md
+- .claude/skills/feather-console-application/references/preferred-patterns.md
+local_deployed_file_hashes:
+  .agents/skills/feather-console-application/SKILL.md: sha256:59977332291a6707355c7b13e703de7c2c2d2b8f13b04bf8f7b0c16667d08778
+  .agents/skills/feather-console-application/references/anti-patterns.md: sha256:5ebafd9ad81f8fa49a642a9434b9ab8bbc0d8fa4479706c824d64b1811adb9b4
+  .agents/skills/feather-console-application/references/examples.md: sha256:ff5d22907de005ddb7968244147b19f7f3b33bfe64e56f387e52ad62be566d22
+  .agents/skills/feather-console-application/references/preferred-patterns.md: sha256:a68560782391de7eff44268aea0e5c3edbd8847125b6781c17a5b3ad7ed42b1a
+  .claude/skills/feather-console-application/SKILL.md: sha256:59977332291a6707355c7b13e703de7c2c2d2b8f13b04bf8f7b0c16667d08778
+  .claude/skills/feather-console-application/references/anti-patterns.md: sha256:5ebafd9ad81f8fa49a642a9434b9ab8bbc0d8fa4479706c824d64b1811adb9b4
+  .claude/skills/feather-console-application/references/examples.md: sha256:ff5d22907de005ddb7968244147b19f7f3b33bfe64e56f387e52ad62be566d22
+  .claude/skills/feather-console-application/references/preferred-patterns.md: sha256:a68560782391de7eff44268aea0e5c3edbd8847125b6781c17a5b3ad7ed42b1a
